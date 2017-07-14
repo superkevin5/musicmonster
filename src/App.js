@@ -10,6 +10,10 @@ import Gallery from './gallery.js';
 class App extends Component {
     constructor(props) {
         super(props);
+        const location = window.location.href;
+        var re = /access_token=(.*)\&token_type=/i;
+        var found = location.match(re);
+        this.token = found[1];
         this.state = {
             query: '',
             artist: null
@@ -39,14 +43,13 @@ class App extends Component {
 
     search() {
         this.setState({});
-        var token = 'BQD-E3h_JsF5w6C_HKR_11poegK6DbrNSLK7VN7hzchKZt00A-z28zevJ8kTplRti0YvBTyHvYzYEhBOgUiNLX9aDL7dfoc3_mNhI98yPJ6gzV16ikiF3IDb-d8-_Kc5RHF1uAi2yZxjoAuvgLfW6f7oShqk';
         const BASE_URL = 'https://api.spotify.com/v1/search?';
         const FETCH_URL = `${BASE_URL}q=${this.state.query}&type=artist&limit=1`;
 
         fetch(FETCH_URL, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + token
+                'Authorization': 'Bearer ' + this.token
             },
         }).then(response=>response.json()).then(json=> {
             const artist = json.artists.items[0];
@@ -59,7 +62,7 @@ class App extends Component {
             fetch('https://api.spotify.com/v1/artists/' + artist.id + '/top-tracks?country=SE', {
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + this.token
                 },
             }).then(response=>response.json()).then(json=> {
                 this.setState({tracks: json.tracks});
@@ -77,7 +80,6 @@ class App extends Component {
     }
 
     render() {
-
         return (
             <div className="App">
                 <div className="App-title">
